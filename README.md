@@ -1,37 +1,38 @@
 # AI Resume Enhancer
 
-AI Resume Enhancer is a web-based tool that helps users improve their resumes through smart, automated feedback. By uploading a resume (PDF or image), users receive detailed suggestions on formatting, grammar, readability, and overall structure — all powered by an AI backend.
+**AI Resume Enhancer** is a free, web-based tool that helps users improve their resumes through intelligent, automated feedback. Upload your resume (PDF or image) and receive actionable suggestions on formatting, grammar, readability, and design — powered by AI.
 
 ## ✨ Features
 
-- Upload support for PDF, JPG, PNG formats
-- AI-generated feedback on resume content and structure
-- Rating system for resume quality
-- Highlighted issues and improvement areas
-- Mobile-responsive design with Tailwind CSS
+- Upload support for **PDF**, **JPG**, and **PNG** formats  
+- **AI-generated feedback** on structure, clarity, and grammar  
+- **Resume quality rating** with detailed breakdown  
+- Highlights key **issues and improvement areas**  
+- **Mobile-friendly UI** with clean, responsive design (Tailwind CSS)
 
 ## 🚀 Live Demo
-https://airesume-enhancer.netlify.app/
 
-Check out the Api version here: [https://ai-resume-checker-nxhw.onrender.com](https://ai-resume-checker-nxhw.onrender.com)
+- 🌐 Web App: [https://airesume-enhancer.netlify.app/](https://airesume-enhancer.netlify.app/)
+- 🧠 API Endpoint: [https://ai-resume-checker-nxhw.onrender.com](https://ai-resume-checker-nxhw.onrender.com)
 
 ## 📦 Technologies Used
 
-- **Frontend**: HTML, Tailwind CSS, Vanilla JavaScript
-- **Backend**: Node.js, Express, Multer, Google Gemini API (or similar)
-- **Hosting**: Render.com
+- **Frontend**: HTML, Tailwind CSS, JavaScript (Vanilla)
+- **Backend**: Node.js, Express, Multer
+- **AI Model**: Google Gemini API (or equivalent LLM)
+- **Hosting**: Netlify (Frontend), Render (Backend)
 
-## 📄 API Response Structure
+## 📄 API Response Format
 
-Example JSON response from the backend:
+The API returns structured JSON feedback:
 
 ```json
 {
-  "sessionID": "abc123",
-  "feedback": "Your resume is well-structured but lacks quantifiable metrics and consistent formatting.",
-  "rating": "7.5/10",
-  "issues": [
-    "lacks quantifiable metrics",
-    "consistent formatting"
-  ]
+  "sessionID": "abc123",
+  "feedback": "Your resume is well-structured but lacks quantifiable metrics and consistent formatting.",
+  "rating": "7.5/10",
+  "issues": [
+    "lacks quantifiable metrics",
+    "consistent formatting"
+  ]
 }
