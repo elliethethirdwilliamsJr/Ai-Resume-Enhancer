@@ -11,8 +11,9 @@ AI Resume Enhancer is a web-based tool that helps users improve their resumes th
 - Mobile-responsive design with Tailwind CSS
 
 ## 🚀 Live Demo
+https://airesume-enhancer.netlify.app/
 
-Check out the live version here: [https://ai-resume-checker-nxhw.onrender.com](https://ai-resume-checker-nxhw.onrender.com)
+Check out the Api version here: [https://ai-resume-checker-nxhw.onrender.com](https://ai-resume-checker-nxhw.onrender.com)
 
 ## 📦 Technologies Used
 
