@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Enhance your resume instantly with AI-powered feedback. Upload your resume to get detailed suggestions, readability scores, and formatting tips to stand out in your job search.">
+  <title>AI Resume Enhancer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #a5b4fc;
+      border-radius: 9999px;
+    }
+    #modalContent {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  #modalContent strong {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: #4f46e5; /* Tailwind indigo-600 */
+}
+#modalContent ul {
+  list-style-type: disc;
+  padding-left: 1.2rem;
+  margin-top: 0.3rem;
+}
+#modalContent p {
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-10">
+    <div class="flex items-center justify-between max-w-4xl mx-auto px-4 py-3">
+     <h1 class="text-lg font-semibold text-indigo-600">AI Resume Enhancer</h1>
+      <div class="w-6"></div> <!-- Placeholder to balance the burger -->
+    </div>
+  </header>
+  
+  
+
+<!-- Backdrop -->
+<div id="backdrop" class="fixed inset-0 bg-black bg-opacity-30 z-40 hidden" onclick="toggleSidebar()"></div>
+
+ 
+
+  <!-- Main Container -->
+  <main class="flex items-center justify-center pt-28 pb-12 px-4">
+    <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-md text-center">
+      <h2 class="text-xl font-bold text-indigo-600 mb-2">Enhance Your Resume</h2>
+      <p class="text-gray-500 mb-6">Upload your resume and get smart feedback.</p>
+
+      <!-- Upload Area -->
+      <label for="file" class="flex items-center justify-center border-2 border-dashed border-indigo-300 bg-indigo-50 hover:bg-indigo-100 rounded-xl w-full h-40 cursor-pointer transition">
+        <div class="text-indigo-500 flex flex-col items-center">
+          <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+<p class="mt-2 font-medium text-center">Click to upload your file<br>(PDF or Image)</p>
+</div>
+      </label>
+      <input type="file" id="file" accept=".pdf,.jpg,.jpeg,.png" class="hidden" />
+
+      <!-- Prompt Input -->
+      <input
+        id="prompt"
+        placeholder="e.g. Rewrite for software job"
+        class="mt-4 px-4 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      />
+      <div id="imagePreview" class="mt-4 hidden">
+  <img id="previewImg" src="" alt="Preview" class="max-h-40 mx-auto rounded shadow-md" />
+</div>
+
+
+      <!-- Analyze Button -->
+      <button
+        id="submitBtn"
+        class="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 rounded-lg transition"
+      >
+        Analyze Resume
+      </button>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-40 hidden z-50 flex items-center justify-center">
+    <div class="bg-white max-w-lg w-full mx-4 p-6 rounded-xl shadow-lg relative">
+      <!-- Close Button -->
+      <button onclick="closeModal()" class="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
+
+      <!-- Modal Title -->
+      <h2 id="modalTitle" class="text-xl font-semibold text-indigo-600 mb-4 text-center">Analyzing...</h2>
+
+      <!-- Spinner -->
+      <div id="spinner" class="flex justify-center py-6">
+        <svg class="w-8 h-8 text-indigo-600 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+      </div>
+
+      <!-- AI Content -->
+      <div id="modalContent" class="hidden text-sm text-gray-700 whitespace-pre-wrap max-h-[60vh] overflow-y-auto border-t pt-4 px-1 leading-relaxed rounded-md bg-gray-50 shadow-inner"></div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("file");
+    const promptInput = document.getElementById("prompt");
+    const submitBtn = document.getElementById("submitBtn");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalContent = document.getElementById("modalContent");
+    const spinner = document.getElementById("spinner");
+
+    submitBtn.addEventListener("click", async () => {
+      if (!fileInput.files[0]) {
+        alert("Please upload a PDF resume first.");
+        return;
+      }
+
+      modal.classList.remove("hidden");
+      modalTitle.textContent = "Analyzing...";
+      spinner.classList.remove("hidden");
+      modalContent.classList.add("hidden");
+      modalContent.textContent = "";
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("prompt", promptInput.value);
+      formData.append("sessionID", "user_" + Date.now());
+
+      try {
+  const res = await fetch("https://ai-resume-checker-nxhw.onrender.com/api/resume-checker", {
+    method: "POST",
+    body: formData,
+  });
+  const data = await res.json();
+
+  const feedback = data.feedback || "No feedback provided.";
+  const rating = data.rating || "";
+  const issues = Array.isArray(data.issues) ? data.issues : [];
+
+  const feedbackHTML = `<strong>Feedback:</strong><p>${feedback}</p>`;
+  const ratingHTML = rating ? `<strong>Rating:</strong><p>${rating} / 10</p>` : "";
+  const issuesHTML = issues.length
+    ? `<strong>Areas to Improve:</strong><ul>${issues.map(issue => `<li>${issue}</li>`).join("")}</ul>`
+    : "";
+
+  modalTitle.textContent = "AI Feedback Summary";
+  modalContent.innerHTML = `${feedbackHTML}${ratingHTML}${issuesHTML}`;
+  spinner.classList.add("hidden");
+  modalContent.classList.remove("hidden");
+} catch (err) {
+  modalTitle.textContent = "Error";
+  spinner.classList.add("hidden");
+  modalContent.classList.remove("hidden");
+  modalContent.textContent = "❌ Something went wrong. Please try again.";
+}
+    })
+
+
+    function closeModal() {
+      modal.classList.add("hidden");
+    }
+  fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  const preview = document.getElementById("imagePreview");
+  const img = document.getElementById("previewImg");
+
+  if (file && file.type.startsWith("image/")) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      img.src = reader.result;
+      preview.classList.remove("hidden");
+    };
+    reader.readAsDataURL(file);
+  } else {
+    preview.classList.add("hidden");
+    img.src = "";
+  }
+});
+
+  const sidebar = document.getElementById("sidebar");
+const backdrop = document.getElementById("backdrop");
+
+
+
+  </script>
+
+</body>
+  </html>
+  
